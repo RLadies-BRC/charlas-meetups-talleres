@@ -1,0 +1,201 @@
+---
+title: "Y entonces... ¿Qué es R?"
+author: <span style="color:#88398A}">RLadies Bariloche</span> 
+date: Noviembre 2018
+
+output: 
+  ioslides_presentation:
+    logo: Plots/RLadies_icon.jpeg
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = T)
+library(viridis)
+```
+
+## <span style="color:#88398A">Cómo es la iniciación a R en la mayoría de los casos</span>
+
+<div align="center">
+<img src="Plots/throw_into_pool.gif" style="width: 60%; height: 60%" />
+
+
+## <span style="color:#88398A"> ¿Qué es R? </span>
+
+- *R* es un lenguaje de programación orientado a la realización de procesos estadísticos y gráficos.
+- Arrancó en los años 1993/96 y fue creado por **R**oss Ihaka and **R**obert Gentleman (Auckland University, Nueva Zelanda), basándose en el lenguaje *S* (1976).
+- A diferencia de *S*, *R* es un **software de código abierto** ("open source"). Es gratuito!
+
+## <span style="color:#88398A"> Filosofía de R: "hibridez" </span>
+
+- R propone satisfacer dos modalidades de trabajo muy frecuentes para los analistas de datos:
+
+    - **Con una interfaz interactiva, con línea de comandos**: se dispone de una consola, donde se tipea un comando, se da enter y algo sucede. Voy *viendo y haciendo*.
+    
+    - **Como lenguaje de programación**: para tareas más complejas, escribimos un programa (o "script") y lo ejecutamos en un servidor o desde la terminal de la compu. No se trabaja comando por comando.
+
+- R es un híbrido entre estas dos modalidades.
+
+## <span style="color:#88398A"> Filosofía de R: "Software Libre" </span>
+
+- *R* se distribuye bajo la licencia para software *GNU GPLv2* que establece las siguientes *libertades*:
+
+    - Libertad de usar el programa con cualquier propósito.
+    - Libertad de ver cómo fue hecho, cómo funciona y modificarlo.
+    - Libertad de distribuir copias.
+    - Libertad de publicar modificaciones y agregados para que estén disponibles para la comunidad.
+
+## <span style="color:#88398A"> Filosofía de R: "Comunidad" </span>
+
+- *R* tiene una comunidad de usuarios muy activa, de las más diversas áreas (**es interdisciplinario**).
+- Probablemente, casi todo lo que quieras hacer, alguien más ya lo pensó, lo hizo y dejó un hermoso tutorial por ahí para que vos también lo puedas hacer (**es extensible**).
+- Cualquier *mensaje de error* que te aparezca, lo googleas y seguro hay muchas páginas con gente debatiendo cómo solucionarlo (**es comunitario**).
+- Existen miles de páginas, blogs y foros de ayuda en internet (por ejemplo, StackOverflow).
+
+
+## <span style="color:#88398A"> Otras características de R </span>
+
+
+- Se integra con otras herramientas (como Latex) para generar manuscritos y presentaciones que pueden actualizarse automáticamente.
+- Disponible en cualquier plataforma de sistema (Windows, OS X, Linux).
+- Provee herramientas gráficas para generar figuras de excelente calidad listas para publicación. 
+- Podemos trabajar con múltiples fuentes de datos: Excel, CSV, texto plano, bases de datos, y mucho mas ...
+
+## <span style="color:#88398A"> Diseño del sistema R </span>
+
+Se divide en dos partes:
+
+- La **base** ("base R System"): se descarga desde [CRAN](https://cran.r-project.org/) ("Comprehensive R Archive Network"). Funciones básicas y fundamentales de R.
+
+<div align="center">    
+<img src="Plots/TrainBasic.JPG" style="width: 50%; height: 50%"/>
+
+
+## <span style="color:#88398A"> Diseño del sistema R </span>
+
+
+- El **resto**: incluye miles de paquetes con funcionalidad específica que el usuario puede elegir descargar también desde CRAN u otros lugares.
+    
+<div align="center">
+<img src="Plots/TrainComplex.JPG" style="width: 40%; height: 40%"/>
+
+
+Hay más de 12500 paquetes regristrados y aprobados en CRAN
+
+## <span style="color:#88398A"> Ok!... ¿Pero qué cosas puedo hacer en R? </span>
+
+<div align="center">
+<img src="Plots/pregunta.jpg" style="width: 50%; height: 50%"/>
+
+
+##  <span style="color:#88398A"> Análisis estadísticos</span>
+
+```{r, fig.show='hold', echo=FALSE, out.width='75%'}
+knitr::include_graphics('Plots/EjAnalisis.png')
+```
+
+##  <span style="color:#88398A"> Hermosos gráficos!!</span>
+
+```{r, fig.show='hold', echo=FALSE, out.width='100%'}
+knitr::include_graphics('Plots/graficos.png')
+```
+
+##  <span style="color:#88398A"> Documentos para presentaciones e informes</span>
+```{r, fig.show='hold', echo=FALSE, out.width='100%'}
+knitr::include_graphics('Plots/diapo.png')
+```
+
+## <span style="color:#88398A">  Hay mas!! </span>
+
+- Gráficos interactivos
+- Libros y publicaciones online
+- Aplicaciones para páginas web
+- Material para dar clases
+- Etc., etc., etc., ...
+
+## <span style="color:#88398A">¿Qué es Rstudio? </span>
+
+
+
+```{r, fig.show='hold', echo=FALSE, fig.align="center", out.width='25%'}
+knitr::include_graphics('Plots/RStudioLogo.png')
+```
+
+- RStudio es un entorno de desarrollo integrado (IDE) para R.
+- Un entorno de desarrollo integrado es una aplicación informática que proporciona servicios integrales para facilitarle al programador el desarrollo de software.
+
+## <span style="color:#88398A"> ¿Por qué usar RStudio?</span>
+
+- permite abrir y editar varios archivos a la vez
+- incluye autocompletado y resaltador de código
+- permite ejecutar porciones de código con sólo seleccionarlos en el programa
+- muestra el workspace (todos los elementos que hemos creado con nuestro programa)
+- muestra el historial de sentencias ejecutadas
+- integra ayuda y documentación
+- integra la gestión de paquetes adicionales
+- gestiona proyectos de trabajo
+- gestiona gráficos
+
+ y mucho más!
+
+## <span style="color:#88398A">Conociendo a RStudio</span>
+
+- Cuando se abre RStudio por primera vez se pueden visualizar tres paneles: 
+
+```{r, out.width='60%', fig.show='hold', fig.cap='Captura de pantalla de RStudio', echo=FALSE, fig.align="center"}
+knitr::include_graphics('Plots/AbrirRStudio.png')
+```
+
+## <span style="color:#88398A">Conociendo a RStudio</span>
+
+- La **consola**. Es la ventana que se comunica con el motor de R.
+- Arriba a la derecha, el panel con las pestañas:
+
+    - **Environment** (*ambiente*): muestra todas las cosas (*objetos*) que R tiene en la cabeza (*memoria*), como conjuntos de datos, modelos, resultados, etc. 
+    - **History** (*historial*): lista todas las instrucciones que R ha corrido.
+
+- Abajo a la derecha: panel con las pestañas **Files**, **Plots**, **Packages**, **Help** y **Viewer**. Tienen lo que sus nombres indican!
+
+## <span style="color:#88398A"> Cosas que yo también hubiese querido saber cuando empecé a usar R </span>
+
+- Usar RStudio
+- Usar Knitr
+- Organizar mi análisis (limpieza de datos, visualización, análisis)
+- Usar control de versiones
+- Preguntar dando un ejemplo reproducible
+- Usar tidyverse
+
+## <span style="color:#88398A"> S.O.S. en R </span>
+
+
+Blogs y portales de ayuda:
+
+- [Stack Overflow](http://stackoverflow.com/tags/r/info)
+- [R Bloggers](https://www.r-bloggers.com/)
+- [Quick R](https://www.statmethods.net/index.html)
+- [R Bloggers](https://www.r-bloggers.com/)
+- [Cookbook for R](http://www.cookbook-r.com/)
+- [STHDA](http://www.sthda.com/english/wiki/r-software)
+- Muchos más...
+
+
+## <span style="color:#88398A"> S.O.S. en R </span>
+Libros:
+
+- [R for Data Science](http://r4ds.had.co.nz/)
+- [R programmig for data science](https://leanpub.com/rprogramming)
+- [An Introduction to Statistical and Data Sciences via R](https://moderndive.com/)
+
+Cheatsheets (machetes), por ejemplo, los de [RStudio](https://www.RStudio.com/resources/cheatsheets/)
+
+Material de clases que están online, por ejemplo, [STATS545](http://stat545.com/topics.html)
+
+Twitter #rstats
+
+----
+
+## <span style="color:#88398A"> ¡Muchas gracias! </span>
+Agradecemos a los chicos de R en Rosario por pasarnos el material
+para esta presentación 
+
+<img src="Plots/descarga.png" style="width: 10%; height: 10%" />
+
