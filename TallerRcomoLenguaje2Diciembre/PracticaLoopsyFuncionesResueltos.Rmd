@@ -1,0 +1,131 @@
+---
+title: "Ejercicios: R como lenguaje de programación"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+Ejercicio 1:
+
+Dados los vectores v1=c(1,2,3,4,5) y v2=c(4,5,8,9) comparar cada elemento del vector v1 con cada elemento del vector v2 y seleccionar los elementos de v1 menores a todos los elementos de v2. Usar las sentencias "for" "if" y el operador lógico all( a < b).
+Imprimir los números seleccionados en pantalla.
+
+```{r}
+v1<-c(1,2,3,4,5)
+v2<-c(4,5,8,9)
+selec<-vector()
+for(i in 1:length(v1))
+{
+   if (all(v1[i] < v2)){selec<-c(selec,v1[i])}
+  
+}
+selec
+```
+
+
+Ejercicio 2:
+
+Leer los nombres de los archivos .csv de este directorio y alojarlos como elementos de una lista (usar el comando "list.files"). Recordar que podemos mirar el help haciendo ?list.files.
+Leer el primer archivo de la lista y examinar el número de filas (usar "read.table", leer también el título de las columnas del archivo con la opción "header" y tener en cuenta que los datos están separados por espacios). Recordar que podemos mirar el help haciendo ?read.table.
+Suponiendo que todos los archivos tienen el mismo número de filas, leer con un loop cada uno de los elementos de la lista de archivos y armar una sola matriz con las columnas no repetidas.
+Para esto tener en cuenta que la expresión !(a %in% b) sirve para preguntar si el elemento a no está incluído en el vector b.
+En la matriz resultado conservar los nombres de los headers originales.
+
+```{r}
+datos<-list()
+datos=list.files(path = ".",pattern=".csv")
+datos
+```
+```{r}
+velocidades<-read.table(datos[[1]],header=TRUE,sep=" ")
+velocidades
+```
+```{r}
+archivos<-list()
+todosdatos<-matrix(nrow=nrow(velocidades))
+todosdatos<-velocidades
+for(i in 2:length(datos))
+  {
+  archivos[[i]]<-read.table(datos[[i]],header=TRUE,sep=" ")
+  for (j in 1:ncol(archivos[[i]]))
+  {
+  if (!(colnames(archivos[[i]])[j] %in% colnames(todosdatos))){
+    todosdatos<-cbind(todosdatos,archivos[[i]][j])
+  }  
+  }
+}
+
+colnames(todosdatos)
+todosdatos
+```
+
+
+Ejercicio 3:
+Calcular con un loop el promedio de cada columna del dataframe del ejercicio anterior y alojar los promedios en un vector.
+
+```{r}
+vectormedias<-vector()
+for(i in 1:ncol(todosdatos))
+{
+  vectormedias[i]=mean(todosdatos[,i])
+}
+vectormedias
+```
+
+
+Ejercicio 4:
+Dada un conjunto de números alojados en un vector, consrtuir una función que me calcule la media y la desviación estandard. 
+
+Recordar que la media aritmética se calcula como:
+
+$\mu= (x_1+x_2+x_3+....+x_n)/n$
+
+Y la desviación estandard se calcula como:
+
+$\sigma= \sqrt {\frac{1}{n} \sum_i{(x_i-\mu)^2}}$
+
+Calcular ambas medidas estadísticas para cada uno de los siguientes vectores contenidos en la lista[[i]]:
+
+```{r}
+lista<-list()
+for(i in 1:150){
+lista[[i]]<-rnorm(100,mean=i,sd=5)
+}
+```
+
+Ejercicio 6:
+Cargar los archivos .csv de éste directorio. Supongamos que son datos medidos de velocidades de un micromamífero en el bosque. Hacer un histograma y ajustarlo con una distribución lognormal.
+Recordar que la lognormal puede escribirse como:
+
+$lognormal(x)=\frac{1}{\sigma x \sqrt{2\pi}} exp(- \frac{(log(x)-\mu)^2}{2\sigma²})$
+
+la media de la distribución es:
+$media= exp(\mu+\frac{\sigma²}{2})$
+
+$mediana=exp(\mu)$
+
+$varianza=exp(2\mu+\sigma²)(exp(\sigma²)-1)$
+
+```{r}
+distriblognormal<-function(x,mu, sigma){
+    return (1/(sigma*x*sqrt(2*pi)) * exp(-(log(x)-mu)**2 / (2*sigma**2)))
+}
+```
+
+```{r}
+# Definimos una semilla (seed) de números aleatorios, por reproducibilidad.
+set.seed(42)
+generodatoslognormal<-rlnorm(n=1000, meanlog=log(1.9), sdlog=log(2.5))
+histogramavelocidad<-hist(generodatoslognormal,breaks=100,freq = FALSE)
+#y<-histogramavelocidad$counts
+y<-histogramavelocidad$density
+xhistogram<-histogramavelocidad$mids
+#prueba para ver si mi definicion de lognormal coincide efectivamente con la de R
+#lines(xhistogram,distriblognormal(xhistogram,log(1.9),log(2.5)),col="red",ty="l")
+#ajusto mi distribución a los "datos"
+modelonolineal <- nls(y ~ distriblognormal(xhistogram,mu,sigma), start = list(mu=log(1.9), sigma=log(2.5)),algorithm = "plinear")
+lines(xhistogram,distriblognormal(xhistogram,coef(modelonolineal)["mu"],coef(modelonolineal)["sigma"]),col="red")
+#guardo los "datos" del histograma de velocidad en un archivo
+write.table(cbind(xhistogram,y),row.names=FALSE,col.names=c("velocidad_m/min","frecuencia"),"datosvelocidadgliroides.csv")
+
+```
+

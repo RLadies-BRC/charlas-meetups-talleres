@@ -1,0 +1,123 @@
+---
+title: 'Ejemplo: Matriz de riqueza con loops'
+output:
+  pdf_document: default
+  html_notebook: default
+---
+Para este ejemplo se necesitarán los paquetes:
+
+"foreign","sp","rgdal","rgeos" y "raster"
+
+
+```{r}
+#setear el directorio de trabajo apropiadamente
+setwd("~/backupOct2019/RLadiesTalleres/CursoRladiesRcomolenguaje/ArchivosdbfparaR/")
+```
+```{r}
+library("foreign") #esta librería la necesito para leer los "data base files" (.dbf)
+#ejecuto desde R el comando del sistema "ls" que me lista los archivos con extensión .dbf y guardo los NOMBRES de los archivos en una lista que llamo listdbf.
+listdbf=list.files(path = ".",pattern=".dbf")
+#hago un for desde 1 hasta la cantidad de nombres que tengo en listdbf que será "length(listdbf)"
+listdbf
+#defino el numero de columnas de salida de la matriz que será el número de archivos mas 2 columnas correspondientes a las coords x,y
+numcolsalida=length(listdbf)+2   
+#IMPORTANTE: en este caso cada .dbf corresponde a la matriz de presencia/ausencia de un sola especie. Entonces como salida voy a querer una matriz cuyas columnas estén rotuladas por el nombre de la especie en cuestión y cada fila represente un punto x,y de la grilla y para cada especie un 1=presencia o un 0=ausencia.
+explorounamatriz<-read.dbf(listdbf[[1]],as.is=TRUE)
+numfilasalida=nrow(explorounamatriz)
+mimatriz<-matrix(ncol=numcolsalida,nrow=numfilasalida)
+mimatriz<-cbind(explorounamatriz$X,explorounamatriz$Y)
+
+nombrecolumna<-vector() 
+nombrecolumna<-c("X","Y")
+#defino una lista que la llamo list1
+list1<-list()
+
+for(i in 1:length(listdbf))
+ {
+  #guardo un dbf en cada elemento de la lista list1 
+  list1[[i]]<-read.dbf(listdbf[[i]],as.is=TRUE)
+  #reemplazo los valores mayores que 1 en la columna de presencia/ausencia por 1
+  list1[[i]]$PRESENCE[which(list1[[i]]$PRESENCE>1)]<-1
+  mimatriz<-cbind(mimatriz, list1[[i]]$PRESENCE)
+  nombrecolumna<-c(nombrecolumna,unique(list1[[i]]$ENGL_NAME)[2])
+ }
+# luego, en cada elemento de la lista list1 tendré un archivo .dbf
+colnames(mimatriz)<-nombrecolumna
+```
+Ahora tengo una matriz llamada "mimatriz" cuyas columnas son [x,y,especie1,especie2,especie3......]
+y cada elemento es un 1 o un cero según la especie esté o no esté en la coordenada x,y correspondiente. Entonces sumando por filas obtengo la "riqueza" de especies en cada sitio x,y.
+
+La suma por filas puede hacerse con un loop o bien utilizando la función llamada apply que ya viene predefinida en R-base. Esta función apply no es mas que un loop "optimizado".
+
+Veamos la forma de hacerlo con apply:
+
+```{r}
+mi_matriz_sin_coord<-mimatriz[,3:ncol(mimatriz)]
+#system.time( 
+  riqueza_apply<-apply(mi_matriz_sin_coord,1,sum) 
+# )
+```
+
+Ahora haremos lo mismo con un loop:
+
+```{r}
+
+riqueza_vector<-vector()
+#system.time(
+for(j in 1:nrow(mi_matriz_sin_coord))
+{
+riqueza_vector[j]<-sum(mi_matriz_sin_coord[j,])
+}
+#)
+```
+Los tiempos no difieren mucho (para matrices más grandes el apply debería ser más rápido)
+
+Verifiquemos que ambos vectores sean iguales, una forma es:
+```{r}
+resta<-riqueza_apply-riqueza_vector
+summary(resta) #debería dar todo cero si son iguales los vectores
+```
+
+######Dibujemos todo esto con la ayuda de Paula ;-)
+```{r}
+#Cargá los  paquetes sp,rgdal, rgeos y raster
+library("rgdal")
+library("sp")
+library("rgeos")
+library("raster")
+#Definir las coordenadas que tendrá el objeto
+df=as.data.frame(mimatriz)
+x= df$X  
+y=df$Y
+coords = data.frame(x, y)
+head(coords)
+#Convertir las coordenadas a un objeto espacial con la función "coordinates"
+coordinates(coords) =  ~x + y
+
+#Ver un sumario de las coordenadas "coords" para ver que se creó un objeto espacial de puntos.
+summary(coords)
+
+#Agregar a "coords" los valores de riqueza
+Riqueza_points= SpatialPointsDataFrame(coords, data.frame(riqueza_apply))
+
+#Especificar la proyección del objeto espacial
+proj4string(Riqueza_points)=CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0
++ellps=WGS84 +datum=WGS84 +units=m +no_defs")
+
+#Ver la tabla de atributos del objeto espacial
+View(Riqueza_points)
+
+#Chequear que la riqueza está contenida en un objeto espacial de puntos
+summary(Riqueza_points)
+
+#Obtener un raster
+Riqueza_raster <- rasterFromXYZ(Riqueza_points, crs="+proj=moll
++lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
+plot(Riqueza_raster)
+
+
+#Para graficar en la escala de frío a cálido
+tempcol <- colorRampPalette(c("blue", "skyblue", "green",
+"lightgreen", "yellow", "orange", "red", "darkred"))
+plot(Riqueza_raster, main="Riqueza de especies", col=tempcol(10))
+```
